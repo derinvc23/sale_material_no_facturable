@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_no_facturable_user" model="res.groups">
+            <field name="name">Materiales No Facturables</field>
+            <field name="category_id" ref="base.module_category_sales_management"/>
+            <field name="comment">Usuarios que pueden marcar líneas como no facturables en OVs y ver los reportes de costos y márgenes.</field>
+        </record>
+
+    </data>
+</odoo>

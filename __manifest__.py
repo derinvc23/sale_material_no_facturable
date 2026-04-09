@@ -7,6 +7,7 @@
     'author': 'Aluminios de Bolivia',
     'depends': ['sale', 'stock', 'sale_stock'],
     'data': [
+        'security/groups.xml',
         'security/ir.model.access.csv',
         'views/sale_order_view.xml',
     ],

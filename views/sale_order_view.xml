@@ -3,22 +3,27 @@
     <data>
 
         <!-- Agregar columnas no_facturable y costo_material en las líneas de la OV -->
+        <!-- groups_id restringe TODO el override: columnas + decoration-muted solo aplican al grupo -->
         <record id="view_sale_order_form_no_facturable" model="ir.ui.view">
             <field name="name">sale.order.form.no.facturable</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="groups_id" eval="[(4, ref('sale_material_no_facturable.group_no_facturable_user'))]"/>
             <field name="arch" type="xml">
 
-                <!-- Columna "No Fact." después del nombre/descripción del producto -->
+                <!-- Columna "No Fact." solo visible para el grupo autorizado -->
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
-                    <field name="no_facturable" optional="show"/>
+                    <field name="no_facturable"
+                           optional="show"
+                           groups="sale_material_no_facturable.group_no_facturable_user"/>
                 </xpath>
 
-                <!-- Columna de costo unitario, visible solo cuando no_facturable -->
+                <!-- Columna de costo unitario, solo para el grupo autorizado -->
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
                     <field name="costo_material"
                            optional="hide"
-                           attrs="{'invisible': [('no_facturable', '=', False)]}"/>
+                           attrs="{'invisible': [('no_facturable', '=', False)]}"
+                           groups="sale_material_no_facturable.group_no_facturable_user"/>
                 </xpath>
 
                 <!-- Resaltar líneas no facturables en gris en el árbol -->
