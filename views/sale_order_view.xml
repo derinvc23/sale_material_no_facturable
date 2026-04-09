@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Agregar columnas no_facturable y costo_material en las líneas de la OV -->
+        <record id="view_sale_order_form_no_facturable" model="ir.ui.view">
+            <field name="name">sale.order.form.no.facturable</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Columna "No Fact." después del nombre/descripción del producto -->
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                    <field name="no_facturable" optional="show"/>
+                </xpath>
+
+                <!-- Columna de costo unitario, visible solo cuando no_facturable -->
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                    <field name="costo_material"
+                           optional="hide"
+                           attrs="{'invisible': [('no_facturable', '=', False)]}"/>
+                </xpath>
+
+                <!-- Resaltar líneas no facturables en gris en el árbol -->
+                <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                    <attribute name="decoration-muted">no_facturable == True</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>
