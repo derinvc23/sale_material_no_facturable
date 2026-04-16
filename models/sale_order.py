@@ -3,6 +3,30 @@ from odoo import api, fields, models
 import odoo.addons.decimal_precision as dp
 
 
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    @api.depends('state', 'order_line.invoice_status', 'order_line.no_facturable')
+    def _get_invoice_status(self):
+        """Si todas las líneas facturables están facturadas y solo quedan líneas NF
+        con estado 'nothing_to_invoice', la OV debe mostrarse como 'Facturado'."""
+        super(SaleOrder, self)._get_invoice_status()
+        for order in self:
+            if order.state not in ('sale', 'done'):
+                continue
+            # Solo corregir cuando quede en 'nothing_to_invoice'
+            if order.invoice_status != 'nothing_to_invoice':
+                continue
+            lines = order.order_line
+            if not lines:
+                continue
+            nf_lines = lines.filtered(lambda l: l.no_facturable)
+            non_nf_lines = lines.filtered(lambda l: not l.no_facturable)
+            # Si hay líneas NF y todas las líneas facturables ya están facturadas
+            if nf_lines and all(l.invoice_status == 'invoiced' for l in non_nf_lines):
+                order.invoice_status = 'invoiced'
+
+
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
